@@ -15,5 +15,5 @@ targets:
 - [X] [2026-03-03] Rename the board column #ui ~@alice @1793259681353
 
 ## Ideas
-- [ ] [2026-03-04] Try a keyboard shortcut for quick add ~@agent @1793259681354
+- [ ] [2026-03-04] Try a keyboard shortcut for quick add ~@carol @1793259681354
   - see [the guide](https://example.com/guide)
