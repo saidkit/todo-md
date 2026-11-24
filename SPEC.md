@@ -52,6 +52,7 @@ Each extension is an inline construct over the text of one list item. None adds 
 | Tag | `#word` | The headline tag `:word:`, written inline. |
 | Id | `@` and 13 digits | The `ID` property of an entry (`:ID:`), written inline as a bare millisecond count. |
 | Mention | `@name` | None. org-mode tags may start with `@` for a context (`:@home:`); the profile reads a letter-led `@name` as a person or a team. GitHub also shows it as a mention. |
+| Author | `~@name` | The `#+AUTHOR:` keyword, which org-mode writes once a file; the profile writes one a line. |
 
 ## 4 The rules
 
@@ -88,12 +89,13 @@ line-text       = [ stamp , " " ] , [ priority , " " ] , text ;
 stamp           = "[" , 4 * digit , "-" , 2 * digit , "-" , 2 * digit , "]" ;
 priority        = "[#" , ( "A" | "B" | "C" | "High" | "Medium" | "Low" ) , "]" ;
 
-(* R7, R12, the inline words of a text *)
+(* R7, R12, R13, the inline words of a text *)
 text            = word , { " " , word } ;
-word            = tag | id | mention | code-span | link | plain ;
+word            = tag | id | mention | author | code-span | link | plain ;
 tag             = "#" , letter , { letter | digit | "-" | "_" } ;
 id              = "@" , 13 * digit ;
 mention         = "@" , letter , { letter | digit | "-" | "_" } ;
+author          = "~@" , letter , { letter | digit | "-" | "_" } ;
 code-span       = "`" , ? any characters except a backtick ? , "`" ;
 link            = "[" , ? label ? , "](" , ? target without spaces ? , ")" ;
 plain           = ? any other run of characters without a space ? ;
@@ -217,7 +219,8 @@ Invalid (group-numbered):
 
 ## R4 Entry line
 Rule: an entry is one bullet list item `- [<state>] <text>` at column 0, a direct child of the document, under a
-section, topic or subtopic. Its first line holds the stamp, the priority and the text (R6, R8, R7). An entry at
+section, topic or subtopic. Its first line holds the stamp, the priority and the text (R6, R8, R7), and the text
+ends with the author and the id (R13, R12). An entry at
 another indent is one finding, and so is a box nested under an entry. The indent is spaces; a tab in the indent
 is one finding. A file holds no fenced code block.
 Valid:
@@ -447,4 +450,39 @@ Invalid (id-duplicate):
 =====
 - [ ] [2026-03-01] first @1793259681351
 - [ ] [2026-03-02] second @1793259681351
+```
+
+## R13 Authors
+Rule: an entry or a todo line carries one author, `~@` and a name (a letter, then letters, digits, `-` or `_`),
+written as a whole word right before its id, or as the last word of its text when it has no id. The author names
+who asked for the line's last write: a person, or `agent` when no person asked for it. The tool that writes the
+line writes the author; it counts in the text's length. A line with no author is read and is a warning
+(`author-missing`); a line whose author is `~@agent` is read and is a warning (`author-agent`). A word that starts
+with `~@` and is not a well-formed author right before the id is one finding (`author-malformed`); a second author
+on one line is one finding (`author-duplicate`). A word `@name` without the tilde stays a mention (R12). GFM strikes
+text through only between a matching pair of tildes; the author is followed by nothing but the id, so it renders
+as written.
+Valid:
+```text
+# Web
+=====
+- [ ] [2026-03-01] ask @alice about it #ui ~@bob @1793259681351
+```
+Invalid (author-malformed):
+```text
+# Web
+=====
+- [ ] [2026-03-01] a name that starts with a digit ~@9bob @1793259681351
+```
+Invalid (author-malformed):
+```text
+# Web
+=====
+- [ ] [2026-03-01] ~@bob an author that is not before the id @1793259681351
+```
+Invalid (author-duplicate):
+```text
+# Web
+=====
+- [ ] [2026-03-01] two authors ~@bob ~@carol @1793259681351
 ```
