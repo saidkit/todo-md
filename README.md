@@ -35,7 +35,9 @@ optional priority, the text with its tags, and an id.
 
 - `SPEC.md`: the versioned rules for both profiles, with a formal grammar, a valid and an invalid example for
   each rule.
-- `examples/`: one valid file per profile.
+- `examples/backlog.md`, `examples/todo.md`: one valid file per profile.
+- `examples/routines.md`: a todo file of daily routines (making Instagram reels): one `[+]` weekly entry per
+  routine, one dated child box per day (`[X]` once run), with `check:` and `ref:` notes.
 - `CHANGELOG.md`: one entry per format version.
 - `LICENSE`: Creative Commons Attribution 4.0 International (CC BY 4.0).
 
